@@ -39,6 +39,7 @@ class ShowArticle(Resource):
 
         article = Article.query.filter(Article.id == id).first()
         article_json = ArticleSchema().dump(article)
+        print(session['page_views'])
 
         if not session.get('user_id'):
             session['page_views'] = 0 if not session.get('page_views') else session.get('page_views')
@@ -94,7 +95,7 @@ class MemberOnlyIndex(Resource):
         if not user:
             return {'message': 'member only index'}, 401
         
-        articles = [ArticleSchema().dump(article) for article in Article.query.all()]
+        articles = [ArticleSchema().dump(article) for article in Article.query.filter_by(is_member_only=True)]
         return make_response(articles, 200)
         
 class MemberOnlyArticle(Resource):
