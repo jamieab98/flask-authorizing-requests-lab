@@ -44,7 +44,7 @@ class ShowArticle(Resource):
             session['page_views'] = 0 if not session.get('page_views') else session.get('page_views')
             session['page_views'] += 1
 
-            if session['page_views'] <= 100:
+            if session['page_views'] <= 3:
                 return article_json, 200
 
             return {'message': 'Maximum pageview limit reached'}, 401
@@ -87,14 +87,21 @@ class CheckSession(Resource):
 class MemberOnlyIndex(Resource):
     
     def get(self):
+        user = session.get('user_id')
+
+        if not user:
+            return {'message': 'member only index'}, 401
+        
         print(User.query.first())
-        return {'message': 'member only index'}
-        pass
 
 class MemberOnlyArticle(Resource):
     
     def get(self, id):
-        pass
+        user = session.get('user_id')
+
+        if not user:
+            return {'message': 'member only article'}, 401
+    
 
 api.add_resource(ClearSession, '/clear', endpoint='clear')
 api.add_resource(IndexArticle, '/articles', endpoint='article_list')
