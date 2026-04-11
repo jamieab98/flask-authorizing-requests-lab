@@ -30,7 +30,7 @@ class ClearSession(Resource):
 class IndexArticle(Resource):
     
     def get(self):
-        articles = [ArticleSchema().dump(article) for article in Article.query.all()]
+        articles = [ArticleSchema().dump(article) for article in Article.query.filter_by(is_member_only=False)]
         return make_response(articles, 200)
 
 class ShowArticle(Resource):
@@ -88,12 +88,15 @@ class MemberOnlyIndex(Resource):
     
     def get(self):
         user = session.get('user_id')
+        #articles = [ArticleSchema().dump(article) for article in Article.query.all()]
+        #return(articles)
 
         if not user:
             return {'message': 'member only index'}, 401
         
-        print(User.query.first())
-
+        articles = [ArticleSchema().dump(article) for article in Article.query.all()]
+        return make_response(articles, 200)
+        
 class MemberOnlyArticle(Resource):
     
     def get(self, id):
